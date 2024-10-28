@@ -1,8 +1,8 @@
 # Function to get a unique filename
 function Get-UniqueFilename {
     $Count = 1
+    $hostname = hostname
     do {
-        $hostname = hostname
         $filename = "$hostname $Count.txt"
         $Count++
     } until (-not (Test-Path $filename))
@@ -26,9 +26,6 @@ $DefaultPrinters = @(
     "OneNote", "Send To OneNote", "OneNote for Windows 10", "OneNote (Desktop)", "AnyDesk Printer","Send to Microsoft OneNote 16 Driver"
 )
 
-# Get non-default printers
-$Printers = Get-Printer | Where-Object { $DefaultPrinters -notcontains $_.Name } |
-    Select-Object Name, DriverName, PortName, PrinterStatus
 
 # Status code to description mapping
 $StatusDescriptions = @{
@@ -41,20 +38,26 @@ $StatusDescriptions = @{
     "6" = "Offline"
 }
 
-# Determine maximum key length for formatting alignment
+# Determine maximum key and value lengths for formatting alignment
 $maxKeyLength = ($PCInfo.Keys | Measure-Object -Maximum Length).Maximum
+$maxValueLength = ($PCInfo.Values | Measure-Object -Maximum Length).Maximum
 
 # Create formatted output for PC details
 $Details = @"
  PC Details:
-+------------------+------------------------------------------+
-| Property         | Value                                    |
-+------------------+------------------------------------------+
-"@
++{0}+{1}+
+| {2} | {3} |
++{0}+{1}+
+"@ -f ('-' * ($maxKeyLength + 2)), ('-' * ($maxValueLength + 2)), ('Property'.PadRight($maxKeyLength)), ('Value'.PadRight($maxValueLength))
+
 foreach ($key in $PCInfo.Keys) {
-    $Details += "`n| {0,-16} | {1,-40} |" -f $key, $PCInfo[$key]
-    $Details += "`n+------------------+------------------------------------------+"
+    $Details += "`n| {0,-$maxKeyLength} | {1,-$maxValueLength} |" -f $key, $PCInfo[$key]
+    $Details += "`n+{0}+{1}+" -f ('-' * ($maxKeyLength + 2)), ('-' * ($maxValueLength + 2))
 }
+
+# Get non-default printers
+$Printers = Get-Printer | Where-Object { $DefaultPrinters -notcontains $_.Name } |
+    Select-Object Name, DriverName, PortName, PrinterStatus
 
 # Add Printer Details
 $Details += @"
