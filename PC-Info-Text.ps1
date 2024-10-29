@@ -16,7 +16,8 @@ $PCInfo = @{
     'Username'      = $env:USERNAME
     'Product Name'  = (Get-CimInstance Win32_ComputerSystem).Model
     'CPU'           = (Get-CimInstance Win32_Processor).Name
-    'Hard Drive'    = (Get-CimInstance Win32_DiskDrive).Model[0]
+    'Hard Drive'    = (Get-CimInstance Win32_DiskDrive).Model
+    'RAM'           = "{0:N2} GB" -f ([math]::Round((Get-CimInstance -ClassName Win32_ComputerSystem).TotalPhysicalMemory / 1GB))
     'Password'      = 'YourPassword'  # Replace with actual password
 }
 
@@ -48,7 +49,7 @@ $Details = @"
 +{0}+{1}+
 | {2} | {3} |
 +{0}+{1}+
-"@ -f ('-' * ($maxKeyLength + 2)), ('-' * ($maxValueLength + 2)), ('Property'.PadRight($maxKeyLength)), ('Value'.PadRight($maxValueLength))
+"@ -f ('-' * ($maxKeyLength + 2)), ('-' * ($maxValueLength + 2)), ('Specification'.PadRight($maxKeyLength)), ('Value'.PadRight($maxValueLength))
 
 foreach ($key in $PCInfo.Keys) {
     $Details += "`n| {0,-$maxKeyLength} | {1,-$maxValueLength} |" -f $key, $PCInfo[$key]
