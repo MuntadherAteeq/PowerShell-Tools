@@ -76,7 +76,6 @@ if ($Printers) {
 }
 $Details += "`n+--------------------------------------------------------------+--------------------------------------------------------------+--------------------------------+-----------------------------+`n"
 
-
 # Fetch physical disks and their types (SSD/HDD) along with their models
 $PhysicalDisks = Get-PhysicalDisk | Select-Object DeviceID, MediaType, Size, Model
 
