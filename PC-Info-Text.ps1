@@ -62,14 +62,14 @@ $Printers = Get-Printer | Where-Object { $DefaultPrinters -notcontains $_.Name }
 # Add Printer Details
 $Details += @"
 `n`n Printer Details:
-+--------------------------------------------------------------+--------------------------------------------------------------+--------------------------------+-----------------------------+
-| Name                                                         | Driver                                                       | Port                           | Status                      |
-+--------------------------------------------------------------+--------------------------------------------------------------+--------------------------------+-----------------------------+
++--------------------------------------------------------------+--------------------------------------------------------------+--------------------------------+--------+
+| Name                                                         | Driver                                                       | Port                           | Status |
++--------------------------------------------------------------+--------------------------------------------------------------+--------------------------------+--------+
 "@
 if ($Printers) {
     foreach ($printer in $Printers) {
         $statusDescription = $StatusDescriptions[$printer.PrinterStatus] -or "Unknown Status"
-        $Details += "`n| {0,-60} | {1,-60} | {2,-30} | {3,-27} |" -f $printer.Name, $printer.DriverName, $printer.PortName, $statusDescription
+        $Details += "`n| {0,-60} | {1,-60} | {2,-30} | {3,-6} |" -f $printer.Name, $printer.DriverName, $printer.PortName, $statusDescription
     }
 } else {
     $Details += "`n| No printers found."
