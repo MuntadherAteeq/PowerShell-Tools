@@ -1,4 +1,3 @@
-# Function to get a unique filename
 function Get-UniqueFilename {
     $Count = 1
     $hostname = hostname
@@ -76,6 +75,26 @@ if ($Printers) {
     $Details += "`n| No printers found."
 }
 $Details += "`n+--------------------------------------------------------------+--------------------------------------------------------------+--------------------------------+-----------------------------+`n"
+
+
+# Fetch physical disks and their types (SSD/HDD) along with their models
+$PhysicalDisks = Get-PhysicalDisk | Select-Object DeviceID, MediaType, Size, Model
+
+# Add Physical Disk Details
+$Details += @"
+`n`n Physical Disk Details:
++-------------+-------------+-------------+----------------------------------+
+| Device ID   | Media Type  | Size        | Model                            |
++-------------+-------------+-------------+----------------------------------+
+"@
+if ($PhysicalDisks) {
+    foreach ($disk in $PhysicalDisks) {
+        $Details += "`n| {0,-11} | {1,-11} | {2,-11} | {3,-32} |" -f $disk.DeviceID, $disk.MediaType, [math]::round($disk.Size / 1GB, 2), $disk.Model
+    }
+} else {
+    $Details += "`n| No physical disks found."
+}
+$Details += "`n+-------------+-------------+-------------+----------------------------------+`n"
 
 # Fetch installed programs and their versions
 $uninstallPaths = @(
