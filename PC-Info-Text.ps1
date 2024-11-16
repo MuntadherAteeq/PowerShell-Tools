@@ -76,24 +76,38 @@ if ($Printers) {
 }
 $Details += "`n+--------------------------------------------------------------+--------------------------------------------------------------+--------------------------------+--------+`n"
 
-# Fetch physical disks and their types (SSD/HDD) along with their models
-$PhysicalDisks = Get-PhysicalDisk | Select-Object DeviceID, MediaType, Size, Model
 
-# Add Physical Disk Details
+# Fetch physical disks with used space, free space, and model details
+$PhysicalDisks = Get-PhysicalDisk | ForEach-Object {
+    $disk = $_
+    $partitions = Get-Partition -DiskNumber $disk.DeviceID -ErrorAction SilentlyContinue
+    $volume = $partitions | ForEach-Object { Get-Volume -Partition $_ -ErrorAction SilentlyContinue } | Select-Object -First 1
+
+    [PSCustomObject]@{
+        DeviceID   = $disk.DeviceID
+        MediaType  = $disk.MediaType
+        Size       = [math]::round($disk.Size / 1GB, 2)
+        UsedSpace  = if ($volume) { [math]::round(($volume.Size - $volume.SizeRemaining) / 1GB, 2) } else { "N/A" }
+        FreeSpace  = if ($volume) { [math]::round($volume.SizeRemaining / 1GB, 2) } else { "N/A" }
+        Model      = $disk.Model
+    }
+}
+
+# Add Physical Disk Details to the output
 $Details += @"
 `n`n Physical Disk Details:
-+-------------+-------------+-------------+----------------------------------+
-| Device ID   | Media Type  | Size        | Model                            |
-+-------------+-------------+-------------+----------------------------------+
++-------------+-------------+-------------+--------------+--------------+----------------------------------+
+| Device ID   | Media Type  | Size (GB)   | Used (GB)    | Free (GB)    | Model                            |
++-------------+-------------+-------------+--------------+--------------+----------------------------------+
 "@
 if ($PhysicalDisks) {
     foreach ($disk in $PhysicalDisks) {
-        $Details += "`n| {0,-11} | {1,-11} | {2,-11} | {3,-32} |" -f $disk.DeviceID, $disk.MediaType, [math]::round($disk.Size / 1GB, 2), $disk.Model
+        $Details += "`n| {0,-11} | {1,-11} | {2,-11} | {3,-12} | {4,-12} | {5,-32} |" -f $disk.DeviceID, $disk.MediaType, $disk.Size, $disk.UsedSpace, $disk.FreeSpace, $disk.Model
     }
 } else {
     $Details += "`n| No physical disks found."
 }
-$Details += "`n+-------------+-------------+-------------+----------------------------------+`n"
+$Details += "`n+-------------+-------------+-------------+--------------+--------------+----------------------------------+`n"
 
 # Fetch installed programs and their versions
 $uninstallPaths = @(
