@@ -1,3 +1,18 @@
+# ------------------------------------------------------------------------------------------------------------
+# Wite powershell script to show file extensions in Windows 11 file explorer
+# Show file extensions in Windows 11
+Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "HideFileExt" -Value 0
+
+# Confirm the registry setting is applied
+$FileExtensions = Get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "HideFileExt"
+
+# ------------------------------------------------------------------------------------------------------------
+# Write powershell script to show hidden files in Windows 11 file explorer
+# Show hidden files in Windows 11
+Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "Hidden" -Value 1
+
+# Confirm the registry setting is applied
+$HiddenFiles = Get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "Hidden"
 
 
 # ------------------------------------------------------------------------------------------------------------
@@ -179,6 +194,10 @@ $XblAuthManager = Get-Service -Name "XblAuthManager"
 $XblGameSave = Get-Service -Name "XblGameSave"
 $XboxNetApiSvc = Get-Service -Name "XboxNetApiSvc"
 
+# ------------------------------------------------------------------------------------------------------------
+# Write powershell script to restart the computer
+Restart-Computer
+
 
 # ------------------------------------------------------------------------------------------------------------
 # print all the services and registry settings that have been disabled with ❌ if they are unsuccessfully disabled and ✅ if they are successfully disabled
@@ -199,5 +218,7 @@ Write-Host "Phone Service: $(if ($PhoneService.Status -eq "Stopped" -and $PhoneS
 Write-Host "Windows Error Reporting Service: $(if ($WindowsErrorReporting.Status -eq "Stopped" -and $WindowsErrorReporting.StartType -eq "Disabled") { "✅" } else { "❌" })"
 Write-Host "Xbox Services: $(if ($XblAuthManager.Status -eq "Stopped" -and $XblAuthManager.StartType -eq "Disabled" -and $XblGameSave.Status -eq "Stopped" -and $XblGameSave.StartType -eq "Disabled" -and $XboxNetApiSvc.Status -eq "Stopped" -and $XboxNetApiSvc.StartType -eq "Disabled") { "✅" } else { "❌" })"
 Write-Host "Web Search in Start Menu: $(if ($WebSearch.BingSearchEnabled -eq 0) { "✅" } else { "❌" })"
+Write-Host "Show File Extensions in Windows 11: $(if ($FileExtensions.HideFileExt -eq 0) { "✅" } else { "❌" })"
+Write-Host "Show Hidden Files in Windows 11: $(if ($HiddenFiles.Hidden -eq 1) { "✅" } else { "❌" })"
 # ------------------------------------------------------------------------------------------------------------
 
