@@ -1,3 +1,12 @@
+
+# ------------------------------------------------------------------------------------------------------------
+# Write powershell script to make the default page in explorer "This PC" instead of "Quick Access"
+# Set the default page in explorer to "This PC"
+Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "LaunchTo" -Value 1
+
+# Confirm the registry setting is applied
+$DefaultPage = Get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "LaunchTo"
+
 # ------------------------------------------------------------------------------------------------------------
 # Wite powershell script to show file extensions in Windows 11 file explorer
 # Show file extensions in Windows 11
@@ -196,7 +205,6 @@ $XboxNetApiSvc = Get-Service -Name "XboxNetApiSvc"
 
 # ------------------------------------------------------------------------------------------------------------
 # Write powershell script to restart the computer
-Restart-Computer
 
 
 # ------------------------------------------------------------------------------------------------------------
@@ -220,5 +228,6 @@ Write-Host "Xbox Services: $(if ($XblAuthManager.Status -eq "Stopped" -and $XblA
 Write-Host "Web Search in Start Menu: $(if ($WebSearch.BingSearchEnabled -eq 0) { "✅" } else { "❌" })"
 Write-Host "Show File Extensions in Windows 11: $(if ($FileExtensions.HideFileExt -eq 0) { "✅" } else { "❌" })"
 Write-Host "Show Hidden Files in Windows 11: $(if ($HiddenFiles.Hidden -eq 1) { "✅" } else { "❌" })"
+Write-Host "Default Page in Explorer: $(if ($DefaultPage.LaunchTo -eq 1) { "✅" } else { "❌" })"
 # ------------------------------------------------------------------------------------------------------------
 
