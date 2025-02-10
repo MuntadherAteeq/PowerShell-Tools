@@ -204,7 +204,13 @@ $XblGameSave = Get-Service -Name "XblGameSave"
 $XboxNetApiSvc = Get-Service -Name "XboxNetApiSvc"
 
 # ------------------------------------------------------------------------------------------------------------
-# Write powershell script to restart the computer
+# Write powershell script to change the date format to dd/MM/yyyy in taskbar
+# Change the date format to dd/MM/yyyy
+Set-ItemProperty -Path "HKCU:\Control Panel\International" -Name "sShortDate" -Value "dd/MM/yyyy"
+
+# Confirm the registry setting is applied
+$DateFormat = Get-ItemProperty -Path "HKCU:\Control Panel\International" -Name "sShortDate"
+
 
 
 # ------------------------------------------------------------------------------------------------------------
@@ -229,5 +235,7 @@ Write-Host "Web Search in Start Menu: $(if ($WebSearch.BingSearchEnabled -eq 0) 
 Write-Host "Show File Extensions in Windows 11: $(if ($FileExtensions.HideFileExt -eq 0) { "✅" } else { "❌" })"
 Write-Host "Show Hidden Files in Windows 11: $(if ($HiddenFiles.Hidden -eq 1) { "✅" } else { "❌" })"
 Write-Host "Default Page in Explorer: $(if ($DefaultPage.LaunchTo -eq 1) { "✅" } else { "❌" })"
+Write-Host "Date Format in Taskbar: $(if ($DateFormat.sShortDate -eq "dd/MM/yyyy") { "✅" } else { "❌" })"
+
 # ------------------------------------------------------------------------------------------------------------
 
