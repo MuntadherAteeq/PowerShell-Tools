@@ -211,8 +211,24 @@ Set-ItemProperty -Path "HKCU:\Control Panel\International" -Name "sShortDate" -V
 # Confirm the registry setting is applied
 $DateFormat = Get-ItemProperty -Path "HKCU:\Control Panel\International" -Name "sShortDate"
 
+# ------------------------------------------------------------------------------------------------------------
+# Write powershell script to hide the search bar in the Windows taskbar by modifying the registry
+# Hide the search bar in the Windows taskbar
+Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Search" -Name "SearchboxTaskbarMode" -Value 0
 
+# Confirm the registry setting is applied
+$SearchBar = Get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Search" -Name "SearchboxTaskbarMode"
 
+# ------------------------------------------------------------------------------------------------------------
+# Write powershell script to hide task view button in Windows 11 taskbar by modifying the registry
+# Hide the task view button in the Windows taskbar
+Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ShowTaskViewButton" -Value 0
+
+# Confirm the registry setting is applied
+$TaskViewButton = Get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ShowTaskViewButton"
+
+ 
+# ------------------------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------------------
 # print all the services and registry settings that have been disabled with ❌ if they are unsuccessfully disabled and ✅ if they are successfully disabled
 
@@ -236,6 +252,7 @@ Write-Host "Show File Extensions in Windows 11: $(if ($FileExtensions.HideFileEx
 Write-Host "Show Hidden Files in Windows 11: $(if ($HiddenFiles.Hidden -eq 1) { "✅" } else { "❌" })"
 Write-Host "Default Page in Explorer: $(if ($DefaultPage.LaunchTo -eq 1) { "✅" } else { "❌" })"
 Write-Host "Date Format in Taskbar: $(if ($DateFormat.sShortDate -eq "dd/MM/yyyy") { "✅" } else { "❌" })"
-
+Write-Host "Hide Search Bar in Taskbar: $(if ($SearchBar.SearchboxTaskbarMode -eq 0) { "✅" } else { "❌" })"
+Write-Host "Hide Task View Button in Taskbar: $(if ($TaskViewButton.ShowTaskViewButton -eq 0) { "✅" } else { "❌" })"
 # ------------------------------------------------------------------------------------------------------------
 
